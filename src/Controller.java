@@ -7,9 +7,13 @@ public class Controller {
     private Model model;
     private ArrayList<View> registeredViews;
 
-    public Controller(Model model, ArrayList<View> registeredViews) {
+    public Controller(Model model, View view) {
         this.model = model;
-        this.registeredViews = registeredViews;
+        this.registeredViews = new ArrayList<>();
+        registeredViews.add(view);
     }
 
+    public void attachView(View view) {
+        registeredViews.add(view);
+    }
 }
