@@ -13,7 +13,14 @@ public class PitShape implements Icon {
     }
 
     public void paintIcon(Component c, Graphics g, int x, int y) {
+        Graphics2D g2 = (Graphics2D) g;
 
+        Ellipse2D pit = new Ellipse2D.Double(0,0,width,height);
+
+        g2.setColor(Color.black);
+        g2.draw(pit);
+        // how to not hardcode the following string position?
+        g2.drawString(Integer.toString(stoneNum), width/2 - 4, 20);
 
 
     }
@@ -24,5 +31,13 @@ public class PitShape implements Icon {
 
     public int getIconHeight() {
         return height;
+    }
+
+    public int getStoneNum() {
+        return stoneNum;
+    }
+
+    public void setStoneNum(int stoneNum) {
+        this.stoneNum = stoneNum;
     }
 }
