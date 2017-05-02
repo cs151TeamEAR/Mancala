@@ -24,35 +24,33 @@ public class View extends JFrame {
 
     private JTextField messageField;
     private JButton pitButton;
-    private PitShape pitShape;
-    private String pitLabel;
 
 
     //    private int stoneNum;
     private ArrayList<Integer> pitsStoneNum;
     private Model model;
 
-    public JPanel drawSixPitsTopPanel() {
-        JPanel sixPitsTopPanel = new JPanel();
-        for (int i = 6; i >= 1; i--) {
-            pitLabel = "B" + Integer.toString(i);
-
-            // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
-            pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
-                    model.getNumStoneOf(pitLabel), pitLabel);
-            pitButton = new JButton(pitShape);
-            pitButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    model.update(pitLabel);
-                    System.out.println("hello");
-                }
-            });
-
-            // add whole panel into an array panel
-            sixPitsTopPanel.add(pitButton);
-        }
-        return sixPitsTopPanel;
-    }
+//    public JPanel drawSixPitsTopPanel() {
+//        JPanel sixPitsTopPanel = new JPanel();
+//        for (int i = 6; i >= 1; i--) {
+//            String pitLabel = "B" + Integer.toString(i);
+//
+//            // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
+//            pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
+//                    model.getNumStoneOf(pitLabel), pitLabel);
+//            pitButton = new JButton(pitShape);
+//            pitButton.addActionListener(new ActionListener() {
+//                public void actionPerformed(ActionEvent e) {
+//                    model.update(pitLabel);
+//                    System.out.println("hello");
+//                }
+//            });
+//
+//            // add whole panel into an array panel
+//            sixPitsTopPanel.add(pitButton);
+//        }
+//        return sixPitsTopPanel;
+//    }
 
     public View(Model model) {
         messageField = new JTextField();
@@ -61,8 +59,7 @@ public class View extends JFrame {
         model.attach(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 messageField.setText(model.getCurrentMessage());
-                pitShape.setStoneNum(15);
-
+                repaint();
             }
         });
 
@@ -76,37 +73,37 @@ public class View extends JFrame {
 
 
         for (int i = 6; i >= 1; i--) {
-             pitLabel = "B" + Integer.toString(i);
+            String pitLabel = "B" + Integer.toString(i);
+            System.out.println("initializing pit" + pitLabel);
 
             // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
-            pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
-                    model.getNumStoneOf(pitLabel), pitLabel);
-             pitButton = new JButton(pitShape);
-            pitButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    model.update(pitLabel);
-                    System.out.println("hello");
-                }
-            });
-
-            // add whole panel into an array panel
-            sixPitsTopPanel.add(pitButton);
-        }
-        for (int i = 1; i <= 6; i++) {
-             pitLabel = "A" + Integer.toString(i);
-
-            // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
-            pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
+            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
                     model.getNumStoneOf(pitLabel), pitLabel);
             pitButton = new JButton(pitShape);
             pitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     model.update(pitLabel);
-                    System.out.println("hello");
+                    System.out.println("updating" + pitLabel);
                 }
             });
 
-            // add whole panel into an array panel
+            sixPitsTopPanel.add(pitButton);
+        }
+        for (int i = 1; i <= 6; i++) {
+            String pitLabel = "A" + Integer.toString(i);
+            System.out.println("initializing pit" + pitLabel);
+
+            // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
+            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
+                    model.getNumStoneOf(pitLabel), pitLabel);
+            pitButton = new JButton(pitShape);
+            pitButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    model.update(pitLabel);
+                    System.out.println("updating" + pitLabel);
+                }
+            });
+
             sixPitsBottomPanel.add(pitButton);
         }
 //            // panel to hold label at top and pit at bottom
