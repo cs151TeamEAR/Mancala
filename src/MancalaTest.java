@@ -1,18 +1,12 @@
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class MancalaTest {
     public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setLocation(448,365);
-        int pitHeight = 500;
-        int pitWidth = pitHeight * 9 /10;
-        Icon pit = new PitShape(pitWidth,pitHeight,3);
-        JLabel label = new JLabel(pit);
+        Model model = new Model(4);
+        View view = new View(model);
 
-        frame.add(label);
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     }
 }

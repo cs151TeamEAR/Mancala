@@ -6,21 +6,30 @@ public class PitShape implements Icon {
     private int width;
     private int height;
     private int stoneNum;
-    public PitShape(int width, int height, int stoneNum) {
+    private String pitLabel;
+
+    public PitShape(int width, int height, int stoneNum, String pitLabel) {
         this.width = width;
         this.height = height;
-        this.stoneNum = 4;
+        this.stoneNum = stoneNum;
+        this.pitLabel = pitLabel;
     }
 
     public void paintIcon(Component c, Graphics g, int x, int y) {
         Graphics2D g2 = (Graphics2D) g;
 
-        Ellipse2D pit = new Ellipse2D.Double(0,0,width,height);
+        Ellipse2D pit = new Ellipse2D.Double(x,y, width, height);
 
         g2.setColor(Color.black);
         g2.draw(pit);
-        // how to not hardcode the following string position?
-        g2.drawString(Integer.toString(stoneNum), width/2 - 4, 20);
+
+        FontMetrics metrics = g2.getFontMetrics();
+        // Determine the X coordinate for the text
+        String stoneNum = Integer.toString(this.stoneNum);
+        int verticalPosition = x + (width - metrics.stringWidth(stoneNum)) / 2;
+        g2.drawString(stoneNum, verticalPosition, 20);
+        verticalPosition = x + (width - metrics.stringWidth(pitLabel)) / 2;
+        g2.drawString(pitLabel, verticalPosition, height);
 
 
     }
@@ -39,5 +48,9 @@ public class PitShape implements Icon {
 
     public void setStoneNum(int stoneNum) {
         this.stoneNum = stoneNum;
+    }
+
+    public String getPitLabel() {
+        return pitLabel;
     }
 }

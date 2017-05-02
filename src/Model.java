@@ -1,3 +1,4 @@
+import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -6,90 +7,182 @@ import java.util.ArrayList;
  * Created by robg on 4/23/17.
  */
 public class Model {
-    private enum InitialStoneNumber {
-        three(3), four(4);
-        private int stoneNum;
 
-        private InitialStoneNumber(int stoneNum) {
-            this.stoneNum = stoneNum;
-        }
 
-        public int getStoneNum() {
-            return stoneNum;
-        }
-    }
-    private enum PitName {
+    private enum Pit {
         A1, A2, A3, A4, A5, A6, MancalaA, B1, B2, B3, B4, B5, B6, MancalaB
     }
+    private enum Player {
+        A, B
+    }
+    private Player currentPlayer;
+    private boolean gameHasEnded;
+    private String currentMessage;
     private static final int NUMBER_OF_PITS_MANCALAS = 14;
     private int[] pitMancalaArray;
 
     private ArrayList<ChangeListener> listeners;
 
-    public Model(InitialStoneNumber initialStoneNumber) {
+    public Model(int initialStoneNumber) {
         pitMancalaArray = new int[NUMBER_OF_PITS_MANCALAS]; // Mancalas are at arrary[0] & [7], others are pits.
-        for (int e : pitMancalaArray) {
-            e = initialStoneNumber.getStoneNum();
+        for (int i = 0; i < NUMBER_OF_PITS_MANCALAS; i++) {
+            // skip MancalaA and MancalaB
+            if (i == Pit.MancalaA.ordinal() || i == Pit.MancalaB.ordinal()) {
+                pitMancalaArray[i] = 0;
+            } else
+                pitMancalaArray[i] = initialStoneNumber;
         }
         listeners = new ArrayList<>();
+        // assume currentPlayer A start first
+        currentPlayer = Player.A;
+        gameHasEnded = false;
+    }
+
+    private void setCurrentPlayer(Player currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
+
+    public String getCurrentMessage() {
+        return currentMessage;
     }
 
     public void attach(ChangeListener l) {
         listeners.add(l);
     }
 
-    public void update(PitName pit) {
-        // if is A
-        if (pit == PitName.MancalaA || pit == PitName.MancalaB) {
-            throw new InvalidParameterException("Selection of Mancala A or B " +
-                    "is invalid.");
+    public void update(String pitName) {
+        Pit pit = Pit.valueOf(pitName);
+        if (pit == null) {
+            currentMessage = "Invalid pit name.";
+            System.out.println(currentMessage);
+        } else if (gameHasEnded) {
+            currentMessage = "Game has ended.";
+            System.out.println(currentMessage);
         }
-        int pitNum = pit.ordinal();
-        boolean currentPitBelongstoMancalaA = false;
-        boolean currentPitBelongstoMancalaB = false;
-        currentPitBelongstoMancalaA = pitNum <= PitName.A6.ordinal();
-        currentPitBelongstoMancalaB = !currentPitBelongstoMancalaA;
+//        if (pit == Pit.MancalaA || pit == Pit.MancalaB) {
+//            throw new InvalidParameterException("Selection of Mancala A or B " +
+//                    "is invalid.");
+//        }
+        else {
+            int pitNum = pit.ordinal();
+
+            int currentStoneNum = pitMancalaArray[pitNum];
+            if (currentStoneNum == 0) {
+                currentMessage = "The pit is empty, please select other pits.";
+                System.out.println(currentMessage);
+            } else {
+
+                int currentPit = pitNum + 1;
+                pitMancalaArray[pitNum] = 0;
+                for (int i = 0, j = 0; i < currentStoneNum; i++, j++) {
+                    currentPit = (pitNum + 1 + j) % NUMBER_OF_PITS_MANCALAS;
+                    // skip MancalaB
+                    if (currentPlayer == Player.A) {
+                        if (currentPit == Pit.MancalaB.ordinal()) {
+                            i--;
+                            continue;
+                        }
+                    } else if (currentPlayer == Player.B) {
+                        if (currentPit == Pit.MancalaA.ordinal()) {
+                            i--;
+                            continue;
+                        }
+                    }
+                    pitMancalaArray[currentPit]++;
+                }
 
 
-        int nextPit = pitNum + 1;
-        int currentStoneNum = pitMancalaArray[pitNum];
-        pitMancalaArray[pitNum] = 0;
-        for (int i = 0, j = 0; i < currentStoneNum; i++, j++) {
-            nextPit = (pitNum + 1 + j) % NUMBER_OF_PITS_MANCALAS;
-            // skip MancalaB
-            if (currentPitBelongstoMancalaA) {
-                if (nextPit == PitName.MancalaB.ordinal()) {
-                    i--;
-                    continue;
+                boolean currentPitBelongstoA = (currentPit <= Pit.A6.ordinal());
+                boolean currentPitBelongstoB = (!currentPitBelongstoA);
+                boolean currentPitIsMancalaA = (currentPit == Pit.MancalaA.ordinal());
+                boolean currentPitIsMancalaB = (currentPit == Pit.MancalaB.ordinal());
+                boolean currentPlayerIsA = (currentPlayer == Player.A);
+                boolean currentPlayerIsB = (currentPlayer == Player.B);
+
+                // if the last stone player dropped is in an empty pit on your side,
+                if (pitMancalaArray[currentPit] == 1) {
+                    if (!currentPitIsMancalaA && !currentPitIsMancalaB) {
+                        if (currentPitBelongstoA && currentPlayerIsA) {
+                            int oppositePit = goToOppositePit(currentPit);
+                            pitMancalaArray[Pit.MancalaA.ordinal()] += pitMancalaArray[oppositePit];
+                            pitMancalaArray[oppositePit] = 0;
+                        } else if (currentPitBelongstoB && currentPlayerIsB) {
+                            int oppositePit = goToOppositePit(currentPit);
+                            pitMancalaArray[Pit.MancalaB.ordinal()] += pitMancalaArray[oppositePit];
+                            pitMancalaArray[oppositePit] = 0;
+                        }
+                    }
                 }
-            } else if (currentPitBelongstoMancalaB) {
-                if (nextPit == PitName.MancalaA.ordinal()) {
-                    i--;
-                    continue;
+
+
+                if (currentPlayerIsA && currentPitIsMancalaA) {
+                    // give one free turn to currentPlayer A
+                    setCurrentPlayer(Player.A);
+                } else if (currentPlayerIsB && currentPitIsMancalaB) {
+                    // give one free turn to currentPlayer B
+                    setCurrentPlayer(Player.B);
+                } else if (currentPlayerIsA) // give next turn to another currentPlayer
+                    setCurrentPlayer(Player.B);
+                else if (currentPlayerIsB)
+                    setCurrentPlayer(Player.A);
+
+
+                int sumOfAllPitA = 0, sumOfAllPitB = 0;
+                for (int i = Pit.A1.ordinal(); i <= Pit.A6.ordinal(); i++) {
+                    sumOfAllPitA += pitMancalaArray[i];
                 }
+                for (int i = Pit.B1.ordinal(); i <= Pit.B6.ordinal(); i++) {
+                    sumOfAllPitB += pitMancalaArray[i];
+                }
+                if (sumOfAllPitA == 0) {
+                    pitMancalaArray[Pit.MancalaB.ordinal()] += sumOfAllPitB;
+                    gameHasEnded = true;
+                } else if (sumOfAllPitB == 0) {
+                    pitMancalaArray[Pit.MancalaA.ordinal()] += sumOfAllPitA;
+                    gameHasEnded = true;
+                }
+
+                // reset currentMessage
+                currentMessage = "";
             }
-            pitMancalaArray[nextPit]++;
         }
-        int oppositePit;
-        if (nextPit != PitName.MancalaA.ordinal() && nextPit != PitName.MancalaB.ordinal())
-            oppositePit = goToOppositePit(nextPit);
 
+        for (ChangeListener l : listeners) {
+            l.stateChanged(new ChangeEvent(this));
+        }
+    }
 
+    public int getNumStoneOf(String pitName) {
+        Pit pit = Pit.valueOf(pitName);
+        return pitMancalaArray[pit.ordinal()];
+    }
 
+    public int getScoreOfPlayerA() {
+        if (gameHasEnded)
+            return pitMancalaArray[Pit.MancalaA.ordinal()];
+        else
+            return 0;
+    }
+    public int getScoreOfPlayerB() {
+        if (gameHasEnded)
+            return pitMancalaArray[Pit.MancalaB.ordinal()];
+        else
+            return 0;
     }
 
 
 
-    private int goToOppositePit(int nextPit) {
+    private int goToOppositePit(int currentPit) {
         // go to opposite pit
-        if (nextPit < 6)
-            nextPit += 7;
-        else if (nextPit > 6)
-            nextPit -= 7;
+        if (currentPit < 6)
+            currentPit += 7;
+        else if (currentPit > 6)
+            currentPit -= 7;
         else {
-            throw new InvalidParameterException("go to opposite pit has a problem");
+            currentMessage = "go to opposite pit has a problem";
+            System.out.println(currentMessage);
         }
-        return nextPit;
+        return currentPit;
     }
 
 
