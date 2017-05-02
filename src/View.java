@@ -23,11 +23,10 @@ public class View extends JFrame {
     public static final int PIT_BUTTON_HEIGHT_RATIO = 4;
 
     private JTextField messageField;
-    private JButton pitButton;
 
 
     //    private int stoneNum;
-    private ArrayList<Integer> pitsStoneNum;
+    private int[] pitsStoneNum;
     private Model model;
 
 //    public JPanel drawSixPitsTopPanel() {
@@ -59,6 +58,7 @@ public class View extends JFrame {
         model.attach(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 messageField.setText(model.getCurrentMessage());
+                pitsStoneNum = model.getPitStoneNumArray();
                 repaint();
             }
         });
@@ -71,15 +71,15 @@ public class View extends JFrame {
         JPanel sixPitsTopPanel = new JPanel(new FlowLayout());
         JPanel sixPitsBottomPanel = new JPanel(new FlowLayout());
 
-
-        for (int i = 6; i >= 1; i--) {
+        pitsStoneNum = model.getPitStoneNumArray();
+        for (int i = 6, j = 7; i >= 1; i--) {
             String pitLabel = "B" + Integer.toString(i);
             System.out.println("initializing pit" + pitLabel);
 
             // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
-            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
-                    model.getNumStoneOf(pitLabel), pitLabel);
-            pitButton = new JButton(pitShape);
+//            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT, model.getNumStoneOf(pitLabel), pitLabel);
+            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT, pitsStoneNum[i], pitLabel);
+            JButton pitButton = new JButton(pitShape);
             pitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     model.update(pitLabel);
@@ -96,7 +96,7 @@ public class View extends JFrame {
             // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
             PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
                     model.getNumStoneOf(pitLabel), pitLabel);
-            pitButton = new JButton(pitShape);
+            JButton pitButton = new JButton(pitShape);
             pitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     model.update(pitLabel);

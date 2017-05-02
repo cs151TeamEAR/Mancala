@@ -23,6 +23,10 @@ public class Model {
 
     private ArrayList<ChangeListener> listeners;
 
+    public int[] getPitStoneNumArray() {
+        return pitMancalaArray.clone();
+    }
+
     public Model(int initialStoneNumber) {
         pitMancalaArray = new int[NUMBER_OF_PITS_MANCALAS]; // Mancalas are at arrary[0] & [7], others are pits.
         for (int i = 0; i < NUMBER_OF_PITS_MANCALAS; i++) {
