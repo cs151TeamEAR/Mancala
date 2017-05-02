@@ -4,14 +4,12 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.Ellipse2D;
-import java.util.ArrayList;
 
 /**
  * Created by robg on 4/23/17.
  */
 
-public class View extends JFrame {
+public class View extends JFrame implements ChangeListener {
     private static final int PIT_WIDTH = 70;
     private static final int PIT_HEIGHT = 90;
     private static final int MANCALA_WIDTH = 55;
@@ -23,6 +21,7 @@ public class View extends JFrame {
     public static final int PIT_BUTTON_HEIGHT_RATIO = 4;
 
     private JTextField messageField;
+    private JButton pitButton;
 
 
     //    private int stoneNum;
@@ -55,31 +54,19 @@ public class View extends JFrame {
         messageField = new JTextField();
         this.model = model;
 
-        model.attach(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                messageField.setText(model.getCurrentMessage());
-                pitsStoneNum = model.getPitStoneNumArray();
-                repaint();
-            }
-        });
-
-
-//        this.stoneNum = stoneNum;
-        setLocation(40,228);
-        setSize(FRAME_WIDTH,FRAME_HEIGHT);
-
         JPanel sixPitsTopPanel = new JPanel(new FlowLayout());
         JPanel sixPitsBottomPanel = new JPanel(new FlowLayout());
 
         pitsStoneNum = model.getPitStoneNumArray();
-        for (int i = 6, j = 7; i >= 1; i--) {
-            String pitLabel = "B" + Integer.toString(i);
+        for (int i = Pit.B6.ordinal(); i >= Pit.B1.ordinal(); i--) {
+            Pit[] pit = Pit.values();
+            String pitLabel = pit[i].name();
             System.out.println("initializing pit" + pitLabel);
 
             // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
 //            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT, model.getNumStoneOf(pitLabel), pitLabel);
             PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT, pitsStoneNum[i], pitLabel);
-            JButton pitButton = new JButton(pitShape);
+            pitButton = new JButton(pitShape);
             pitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     model.update(pitLabel);
@@ -89,14 +76,14 @@ public class View extends JFrame {
 
             sixPitsTopPanel.add(pitButton);
         }
-        for (int i = 1; i <= 6; i++) {
-            String pitLabel = "A" + Integer.toString(i);
+        for (int i = Pit.A1.ordinal(); i <= Pit.A6.ordinal(); i++) {
+            Pit[] pit = Pit.values();
+            String pitLabel = pit[i].name();
             System.out.println("initializing pit" + pitLabel);
 
             // button to hold stoneNum at top, pitShape at middle, and pitLabel at bottom
-            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT,
-                    model.getNumStoneOf(pitLabel), pitLabel);
-            JButton pitButton = new JButton(pitShape);
+            PitShape pitShape = new PitShape(PIT_WIDTH, PIT_HEIGHT, pitsStoneNum[i], pitLabel);
+            pitButton = new JButton(pitShape);
             pitButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     model.update(pitLabel);
@@ -158,10 +145,18 @@ public class View extends JFrame {
 
 
 
+        setLocation(40,228);
+        setSize(FRAME_WIDTH,FRAME_HEIGHT);
+
         // how to solve missing lines segment around multiple shapes?
         setVisible(true);
         pack();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }
 
+    public void stateChanged(ChangeEvent e) {
+        messageField.setText(model.getCurrentMessage());
+        pitsStoneNum = model.getPitStoneNumArray();
+        repaint();
+    }
 }

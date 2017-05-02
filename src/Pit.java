@@ -1,8 +1,8 @@
 /**
- * Created by robg on 4/23/17.
+ * Created by robg on 5/2/17.
  */
-public class Pit extends Mancala {
-    public Pit(int numOfStone) {
-        super(numOfStone);
-    }
+public enum Pit {
+
+    A1, A2, A3, A4, A5, A6, MancalaA, B1, B2, B3, B4, B5, B6, MancalaB
+
 }
