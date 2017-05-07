@@ -1,5 +1,9 @@
 /**
- * Created by robg on 5/2/17.
+ * Created by Robin Goh, Arselan Alvi and Erin Yang on 5/2/17.
+ */
+
+/**
+ * Name of pits in the Mancala game
  */
 public enum Pit {
 
