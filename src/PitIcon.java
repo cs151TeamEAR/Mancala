@@ -17,10 +17,10 @@ public class PitIcon implements Icon {
 
     /**
      * Create a pitIcon.
-     * @param width width of icon
-     * @param height height of icon
-     * @param stoneNum number of stones to be drawn/displayed in a pit
-     * @param pitLabel name of the pit
+     * @param width the width of icon
+     * @param height the height of icon
+     * @param stoneNum the number of stones to be drawn/displayed in a pit
+     * @param pitLabel the name of the pit
      * @param mancalaPitShape the style and shape of the pits
      */
     public PitIcon(int width, int height, int stoneNum, String pitLabel, MancalaPitShape mancalaPitShape) {

@@ -1,7 +1,5 @@
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.RoundRectangle2D;
 
 /**
  * Created by Robin Goh, Arselan Alvi and Erin Yang on 5/3/17.

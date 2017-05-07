@@ -3,7 +3,7 @@
  */
 
 /**
- * Main program that starts the Mancala game.
+ * The class MancalaTest contains the main method that will start the Mancala game.
  */
 public class MancalaTest {
     public static void main(String[] args) {

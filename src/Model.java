@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 /**
  * A model class that represent the logic of a Mancala game with the option to undo.
+ * -The Model class contains the data structure that will appropriately update itself depending on the
+ * player gameplay. An instance of this object initializes the Mancala object to be played.
  */
 public class Model {
 
@@ -26,7 +28,8 @@ public class Model {
     public static final String INITIAL_GAME_MESSAGE = "Player A starts first.";
 
     /**
-     * Player A and B with count of undos.
+     * An enum that contains two values, Player A and Player B. Keeps track of the number of
+     * times an undo has been used.
      */
     private enum Player {
         A(0), B(0);
@@ -37,6 +40,10 @@ public class Model {
 
         private int countOfUndo;
 
+        /**
+         * Returns the undo count back to the function that called it
+         * @return the number of undos already used
+         */
         public int getCountOfUndo() {
             return countOfUndo;
         }
@@ -55,6 +62,7 @@ public class Model {
             countOfUndo = 0;
         }
     }
+
     private Player currentPlayer;
     private Player previousPlayer;
     private boolean gameHasEnded;
@@ -75,7 +83,7 @@ public class Model {
     }
 
     /**
-     * Create a Mancala model
+     * Create a data model for the mancala class by initiallizing Mancala pits and the player starting the game.
      */
     public Model() {
         pitMancalaArray = new int[NUMBER_OF_PITS_MANCALAS]; // Mancalas are at arrary[0] & [7], others are pits.
@@ -128,14 +136,14 @@ public class Model {
 
     /**
      * Attach a ChangeListener to this game model class.
-     * @param l a ChangeListener
+     * @param l a ChangeListener object
      */
     public void attach(ChangeListener l) {
         listeners.add(l);
     }
 
     /**
-     * Updates the number of stones for all pits in game after player has selected one or choose to undo.
+     * Updates the number of stones for all pits in game after player has clicked a mancala pit or the undo button.
      * Sets currentMessage of the game depending on the state of the game. Tracks if the game has ended.
      * @param pitName the name of the pit that player chosen to take the stones from
      */
@@ -148,9 +156,9 @@ public class Model {
             currentMessage = INVALID_PIT_NAME_MESSAGE;
             System.out.println(currentMessage);
         } else if (pit.ordinal() > Pit.MancalaA.ordinal() && currentPlayer == Player.A) {
-            currentMessage = SELECT_YOUR_OWN_PITS_A_MESSAGE;
+            currentMessage = SELECT_YOUR_OWN_PITS_A_MESSAGE; //set message
         } else if (pit.ordinal() < Pit.MancalaA.ordinal() && currentPlayer == Player.B) {
-            currentMessage = SELECT_YOUR_OWN_PITS_B_MESSAGE;
+            currentMessage = SELECT_YOUR_OWN_PITS_B_MESSAGE; //set messafe
         } else {
             undoPitMancalaArray = pitMancalaArray.clone();
             currentMessage = "";
@@ -165,7 +173,7 @@ public class Model {
                 pitMancalaArray[pitNum] = 0;
                 for (int i = 0, j = 0; i < currentStoneNum; i++, j++) {
                     currentPit = (pitNum + 1 + j) % NUMBER_OF_PITS_MANCALAS;
-                    // skip MancalaB
+                    // skip MancalaB when stones are being distributed
                     if (currentPlayer == Player.A) {
                         if (currentPit == Pit.MancalaB.ordinal()) {
                             i--;
@@ -273,7 +281,7 @@ public class Model {
     }
 
     /**
-     * Gets number of stones inside a pit.
+     * Gets the number of stones inside a pit.
      * @param pitName the name of the pit
      * @return the number of stones inside the pit
      */

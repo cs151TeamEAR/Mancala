@@ -135,7 +135,6 @@ public class View extends JFrame implements ChangeListener {
         add(messageArea, gridBagConstraints);
         messageArea.setEditable(false);
 
-
         setVisible(true);
         pack();
         setLocationRelativeTo(null);
